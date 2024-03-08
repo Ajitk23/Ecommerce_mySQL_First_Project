@@ -1,0 +1,114 @@
+CREATE DATABASE ecommerce;
+USE ecommerce;
+
+CREATE TABLE categories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL,
+    category_description TEXT
+);
+
+CREATE TABLE subcategories(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    subcategory_name VARCHAR(100) NOT NULL,
+    subcategory_description TEXT,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+CREATE TABLE customers(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(50),
+    email VARCHAR(100),
+    phone BIGINT CHECK(LENGTH(phone) = 10),
+    password VARCHAR(20),
+    gender CHAR(2),
+    birthday date,
+    address VARCHAR(40)
+);
+
+
+
+
+
+CREATE TABLE products(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    product_name VARCHAR(40) NOT NULL,
+    description VARCHAR(100),
+    price int,
+    modelname VARCHAR(100),
+    color VARCHAR(30),
+    availability VARCHAR(30),
+    specification TEXT,
+    subcategory_id INT,
+    Foreign Key (subcategory_id) REFERENCES subcategories(id)
+    );
+
+
+CREATE TABLE orders(
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    customer_id INT,
+    product_id INT,
+    amount INT,
+    quantity INT,
+    order_date DATE,
+    delivery_date DATE,
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    Foreign Key (customer_id) REFERENCES customers(id)
+);
+
+CREATE TABLE shipments(
+    id INT AUTO_INCREMENT,
+    shipping_address VARCHAR(50),
+    status VARCHAR(10),
+    order_id INT,
+    PRIMARY KEY (id, shipping_address),
+    Foreign Key (order_id) REFERENCES orders(id)
+);
+
+
+CREATE TABLE returns(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    customer_id INT,
+    return_date DATE,
+    description VARCHAR(150),
+    type VARCHAR(50),
+    reason TEXT,
+    Foreign Key (order_id) REFERENCES orders(id),
+    Foreign Key (customer_id) REFERENCES customers(id)
+);
+
+CREATE TABLE address(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    customer_id INT,
+    country VARCHAR(20),
+    state VARCHAR(20),
+    city VARCHAR(20),
+    pin_code BIGINT CHECK(LENGTH(pin_code) = 6),
+    shipping_address VARCHAR(50),
+    billing_address VARCHAR(60),
+    Foreign Key (customer_id) REFERENCES customers(id)
+);
+
+CREATE TABLE payments(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    order_id INT,
+    payment_type varchar(20),
+    payment_date DATETIME,
+    status VARCHAR(30),
+    amount INT,
+    FOREIGN KEY(order_id) REFERENCES orders(id)
+);
+
+CREATE TABLE feedback(
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    customer_id INT,
+    order_id INT,
+    product_id INT,
+    message TEXT,
+    rating FLOAT CHECK(rating >= 0 AND rating <= 5),
+    FOREIGN KEY(customer_id) REFERENCES customers(id),
+    FOREIGN KEY(order_id) REFERENCES orders(id),
+    FOREIGN KEY(product_id) REFERENCES products(id)
+);
+
